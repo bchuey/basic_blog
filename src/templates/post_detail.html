@@ -8,7 +8,7 @@
 	{% if instance.image %}
 		<img src="{{ instance.image.url }}" class="img-responsive"/>
 	{% endif %}
-	<h1>{{ instance.title }} <small>{{ instance.timestamp }}</small></h1>
+	<h1>{{ instance.title }} <small>{% if instance.draft %}<span style='color:red;'>Draft</span>{% endif %}{{ instance.timestamp }}</small></h1>
 	<p>{{ instance.content }}</p>
 </div>
 
