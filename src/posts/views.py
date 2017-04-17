@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
 from posts.models import Post
@@ -12,15 +12,6 @@ def post_list(request):
 		"title": "List"
 	}
 
-	# if request.user.is_authenticated():
-	# 	context = {
-	# 		"title": "My User List"
-	# 	}
-	# else:
-	# 	context = {
-	# 		"title": "List"
-	# 	}
-
 	return render(request, "index.html", context)
 
 def post_create(request):
@@ -29,9 +20,7 @@ def post_create(request):
 	if form.is_valid():
 		instance = form.save(commit=False)
 		instance.save()
-	# if request.method == "POST":
-	# 	print request.POST.get("content")
-	# 	print request.POST.get("title")
+		return HttpResponseRedirect(instance.get_absolute_url())
 
 	context = {
 		"form": form,
@@ -47,12 +36,25 @@ def post_detail(request, id=None):
 		"instance": instance,
 	}
 
-	# return HttpResponse("<h1>List</h1>")
 	return render(request, "post_detail.html", context)
 
-def post_update(request):
+def post_update(request, id=None):
 
-	return HttpResponse("<h1>Update</h1>")
+	instance = get_object_or_404(Post,id=id)
+	form = PostForm(request.POST or None, instance=instance)
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+		return HttpResponseRedirect(instance.get_absolute_url())
+
+	context = {
+		"title": "Detail",
+		"instance": instance,
+		"form": form,
+	}
+
+	# return HttpResponse("<h1>List</h1>")
+	return render(request, "post_form.html", context)
 
 def post_delete(request):
 
