@@ -1,9 +1,13 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+
+from posts.models import Post
 
 # Create your views here.
 def post_list(request):
+	queryset = Post.objects.all()
 	context = {
+		"object_list": queryset,
 		"title": "List"
 	}
 
@@ -24,12 +28,14 @@ def post_create(request):
 
 def post_detail(request):
 	
+	instance = get_object_or_404(Post,id=1)
 	context = {
-		"title": "Detail"
+		"title": "Detail",
+		"instance": instance,
 	}
 
 	# return HttpResponse("<h1>List</h1>")
-	return render(request, "index.html", context)
+	return render(request, "post_detail.html", context)
 
 def post_update(request):
 
