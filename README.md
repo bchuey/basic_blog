@@ -1,1 +1,1 @@
-# trydjango19
+# basic blog
