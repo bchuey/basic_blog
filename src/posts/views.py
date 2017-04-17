@@ -13,7 +13,7 @@ def post_list(request):
 		"title": "List"
 	}
 
-	return render(request, "index.html", context)
+	return render(request, "post_list.html", context)
 
 def post_create(request):
 
