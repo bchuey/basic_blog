@@ -9,9 +9,7 @@ from posts.forms import PostForm
 
 # Create your views here.
 def post_list(request):
-	if not request.user.is_staff or not request.user.is_superuser:
-		raise Http404
-
+	
 	queryset_list = Post.objects.all().order_by("-timestamp")
 	paginator = Paginator(queryset_list,25)
 
@@ -34,10 +32,15 @@ def post_list(request):
 	return render(request, "post_list.html", context)
 
 def post_create(request):
+	if not request.user.is_staff or not request.user.is_superuser:
+		raise Http404
+	# if not request.user.is_authenticated():
+	# 	raise Http404
 
 	form = PostForm(request.POST or None, request.FILES or None)
 	if form.is_valid():
 		instance = form.save(commit=False)
+		instance.user = request.user
 		instance.save()
 		# message success
 		messages.success(request, "Successfully Created!")
