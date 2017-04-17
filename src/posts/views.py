@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 
 from posts.models import Post
+from posts.forms import PostForm
 
 # Create your views here.
 def post_list(request):
@@ -24,7 +25,19 @@ def post_list(request):
 
 def post_create(request):
 
-	return HttpResponse("<h1>Create</h1>")
+	form = PostForm(request.POST or None)
+	if form.is_valid():
+		instance = form.save(commit=False)
+		instance.save()
+	# if request.method == "POST":
+	# 	print request.POST.get("content")
+	# 	print request.POST.get("title")
+
+	context = {
+		"form": form,
+	}
+
+	return render(request, "post_form.html", context)
 
 def post_detail(request, id=None):
 	
