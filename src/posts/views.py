@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 
 from posts.models import Post
 from posts.forms import PostForm
@@ -10,7 +11,7 @@ from posts.forms import PostForm
 # Create your views here.
 def post_list(request):
 	
-	queryset_list = Post.objects.all().order_by("-timestamp")
+	queryset_list = Post.objects.active()
 	paginator = Paginator(queryset_list,25)
 
 	page_request_var = "page"
@@ -57,6 +58,10 @@ def post_create(request):
 def post_detail(request, id=None):
 	
 	instance = get_object_or_404(Post,id=id)
+	if instance.draft or instance.publish > timezone.now().date():
+		if not request.user.is_staff or not request.user.is_superuser:
+			raise Http404
+			
 	share_string = quote_plus(instance.content)
 
 	context = {
